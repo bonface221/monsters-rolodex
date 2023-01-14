@@ -1,6 +1,8 @@
 // import { useState } from 'react';
 import { Component } from "react";
 import "./App.css";
+import CardList from "./components/card-list/card-list.component";
+import SearchBox from "./components/search-box/Search-box.component";
 
 class App extends Component {
 	constructor() {
@@ -23,6 +25,10 @@ class App extends Component {
 				)
 			);
 	}
+	onSearchChange = (e) =>
+		this.setState({
+			input: e.target.value,
+		});
 
 	render() {
 		let myData;
@@ -35,24 +41,8 @@ class App extends Component {
 		}
 		return (
 			<div className="App">
-				<p>search for a monster</p>
-				<input
-					className="search-box"
-					type="search"
-					placeholder="search monsters"
-					onChange={(e) =>
-						this.setState({
-							input: e.target.value,
-						})
-					}
-				/>
-				<ul>
-					{myData.map((monster, index) => (
-						<li className="myLi" key={index}>
-							{monster.name}
-						</li>
-					))}
-				</ul>
+				<SearchBox onChange={this.onSearchChange}/>
+				<CardList monsters= {myData}/>
 			</div>
 		);
 	}
