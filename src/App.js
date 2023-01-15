@@ -1,51 +1,34 @@
-// import { useState } from 'react';
-import { Component } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import CardList from "./components/card-list/card-list.component";
 import SearchBox from "./components/search-box/Search-box.component";
 
-class App extends Component {
-	constructor() {
-		super();
+function App() {
+	const [monsters, setMonsters] = useState([]);
+	const [filteredMonsters, setFilteredMonsters] = useState(monsters);
+	const [input, setInput] = useState("");
+	const url = "https://jsonplaceholder.typicode.com/users";
 
-		this.state = {
-			monsters: [],
-			input: "",
-		};
-	}
-	url = "https://jsonplaceholder.typicode.com/users";
+	const onSearchChange = (e) => setInput(e.target.value);
 
-	componentDidMount() {
-		fetch(this.url)
+	useEffect(() => {
+		fetch(url)
 			.then((res) => res.json())
-			.then((users) =>
-				this.setState(
-					() => ({ monsters: users }),
-					() => console.log(this.state)
-				)
-			);
-	}
-	onSearchChange = (e) =>
-		this.setState({
-			input: e.target.value,
-		});
+			.then((users) => setMonsters(users));
+	}, []);
 
-	render() {
-		let myData;
-		if (!this.state.input) {
-			myData = this.state.monsters;
-		} else {
-			myData = this.state.monsters.filter(({ name }) =>
-				name.includes(this.state.input)
-			);
-		}
-		return (
-			<div className="App">
-				<SearchBox onChange={this.onSearchChange}/>
-				<CardList monsters= {myData}/>
-			</div>
-		);
-	}
+	useEffect(() => {
+		let myData = monsters.filter(({ name }) => name.includes(input));
+		setFilteredMonsters(myData);
+	}, [monsters, input]);
+
+	return (
+		<div className="App">
+			<h1 className="app-title">Monster Rolodex</h1>
+			<SearchBox onChange={onSearchChange} />
+			<CardList monsters={filteredMonsters} />
+		</div>
+	);
 }
 
 export default App;
